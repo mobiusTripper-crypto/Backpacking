@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Safety Briefing — Bali 4.6</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0f1923;
+    --surface:  #19283a;
+    --surface2: #1e3248;
+    --border:   #2a3f55;
+    --text:     #e8f0f8;
+    --muted:    #8aabbf;
+    --gold:     #e8a020;
+    --danger-border: #c0392b;
+    --caution-border: #c96a00;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+  }
+
+  .page-header {
+    background: #0a1520;
+    padding: 1rem 1.2rem .9rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 1rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+  .page-header p  { font-size: .72rem; color: var(--muted); margin-top: .2rem; font-family: 'DM Mono', monospace; }
+
+  .progress-wrap {
+    background: #0d1e2e;
+    padding: .5rem 1.2rem;
+    display: flex; align-items: center; gap: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-bar-outer { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; background: var(--gold); border-radius: 2px; width: 0%; transition: width .3s ease; }
+  .progress-label { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); white-space: nowrap; min-width: 3.2rem; text-align: right; }
+
+  .sections { padding: .6rem .7rem 0; }
+
+  .section {
+    background: var(--surface);
+    border-radius: 10px;
+    margin-bottom: .5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .section.danger  { border-left: 3px solid var(--danger-border); }
+  .section.caution { border-left: 3px solid var(--caution-border); }
+  .section.done    { opacity: .4; }
+
+  .section-header {
+    display: flex; align-items: center;
+    padding: .75rem .9rem .75rem .85rem;
+    cursor: pointer; user-select: none; gap: .55rem;
+    border-bottom: 1px solid transparent;
+  }
+  .section.open .section-header { border-bottom-color: var(--border); background: var(--surface2); }
+
+  .section-num  { font-family: 'DM Mono', monospace; font-size: .67rem; color: var(--muted); min-width: 1.3rem; }
+  .section-title { flex: 1; font-size: .9rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+
+  .check-btn {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .15s; cursor: pointer;
+  }
+  .check-btn.checked { background: #2e7d32; border-color: #2e7d32; }
+  .check-btn svg { display: none; }
+  .check-btn.checked svg { display: block; }
+
+  .chevron { color: var(--muted); transition: transform .25s ease; flex-shrink: 0; }
+  .section.open .chevron { transform: rotate(180deg); }
+
+  .section-body { display: none; padding: .6rem .9rem .85rem; }
+  .section.open .section-body { display: block; }
+
+  .cue-row {
+    display: grid;
+    grid-template-columns: 6.4rem 1fr;
+    gap: .35rem .65rem;
+    padding: .42rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+  }
+  .cue-row:last-child { border-bottom: none; }
+
+  .cue-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .68rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .03em; line-height: 1.5;
+  }
+  .cue-text { font-size: .875rem; line-height: 1.45; color: var(--text); }
+  .cue-text strong { font-weight: 700; color: #ffffff; }
+
+  .callout {
+    border-radius: 6px; padding: .55rem .75rem;
+    margin: .45rem 0 .55rem;
+    font-size: .84rem; line-height: 1.45; color: var(--text);
+  }
+  .callout.danger  { background: rgba(192,57,43,.18); border-left: 3px solid var(--danger-border); }
+  .callout.caution { background: rgba(201,106,0,.18);  border-left: 3px solid var(--caution-border); }
+  .callout strong  { font-weight: 700; color: #ffffff; }
+
+  .page-footer { text-align: center; padding: 1.4rem 1rem .5rem; font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--muted); }
+  .page-footer strong { color: var(--text); display: block; font-size: .78rem; margin-bottom: .25rem; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Safety Briefing — Bali 4.6</h1>
+  <p>Grenadines · March 2026 · Captain's cue card</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 14</div>
+</div>
+
+<div class="sections">
+
+  <!-- 01 OPENING -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">01</span>
+      <span class="section-title">Opening</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">tone</span><span class="cue-text">Short and useful. Not a liability speech.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ stakes</span><span class="cue-text">People die on the water. Not on this boat.</span></div>
+      <div class="cue-row"><span class="cue-label">questions</span><span class="cue-text">Ask me anything. No stupid safety questions.</span></div>
+    </div>
+  </div>
+
+  <!-- 02 THE BOAT -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">02</span>
+      <span class="section-title">The Boat</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">layout</span><span class="cue-text">46ft cat · 2 engines · flybridge helm · 7 cabins · 4 heads</span></div>
+      <div class="cue-row"><span class="cue-label">foredeck</span><span class="cue-text">Solid deck, not a net. Great at anchor. In 3+ ft waves: stay aft — wet and rough out there.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ blind spot</span><span class="cue-text">I CANNOT see the swim platforms or the water at the stern from up top.</span></div>
+    </div>
+  </div>
+
+  <!-- 03 SEASICKNESS -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">03</span>
+      <span class="section-title">Seasickness</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">tone</span><span class="cue-text">Nobody's too tough. Trade swell gets people. No judgment — say something early.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ say something</span><span class="cue-text">Feel off in any way — queasy, headache, just not right — tell me immediately.</span></div>
+      <div class="cue-row"><span class="cue-label">meds</span><span class="cue-text">Dramamine works only if taken before. Night before or 1hr before underway. Too late once sick.</span></div>
+      <div class="cue-row"><span class="cue-label">patch</span><span class="cue-text">Scopolamine = most effective. Rx required. Behind the ear the night before, not morning of.</span></div>
+      <div class="cue-row"><span class="cue-label">bracelets</span><span class="cue-text">Sea-Bands — I have an extra to borrow. On before you feel sick. Ask before we leave the dock.</span></div>
+      <div class="cue-row"><span class="cue-label">ginger</span><span class="cue-text">Ginger chews or ginger ale. Actually works for some. Zero side effects.</span></div>
+      <div class="cue-row"><span class="cue-label">doctors</span><span class="cue-text">Medical professionals on all three boats. I'm not a doctor. Ask them.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ stay on deck</span><span class="cue-text">Going below makes it worse. No screens or reading below if you're queasy.</span></div>
+      <div class="cue-row"><span class="cue-label">horizon</span><span class="cue-text">Fixed point, far away. It works.</span></div>
+      <div class="cue-row"><span class="cue-label">take the helm</span><span class="cue-text">Ask me. Task + watching ahead helps more than almost anything.</span></div>
+      <div class="cue-row"><span class="cue-label">midship</span><span class="cue-text">Center moves least. Avoid the bow in rough conditions.</span></div>
+      <div class="cue-row"><span class="cue-label">if sick</span><span class="cue-text">Leeward (downwind) side — I'll show you. Small sips of water. Saltines. It passes.</span></div>
+    </div>
+  </div>
+
+  <!-- 04 MOVING AROUND -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">04</span>
+      <span class="section-title">Moving Around</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="callout danger"><strong>ALWAYS:</strong> One hand for you, one hand for the boat.</div>
+      <div class="cue-row"><span class="cue-label">underway</span><span class="cue-text">Everything moves more than you expect. Slow down.</span></div>
+      <div class="cue-row"><span class="cue-label">aft door</span><span class="cue-text"><strong>Always closed underway.</strong></span></div>
+      <div class="cue-row"><span class="cue-label">foredeck</span><span class="cue-text">Stay aft in 3+ ft waves.</span></div>
+      <div class="cue-row"><span class="cue-label">night</span><span class="cue-text">Red lights preferred — white kills night vision.</span></div>
+    </div>
+  </div>
+
+  <!-- 05 ENGINES & PROPS -->
+  <div class="section danger open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">05</span>
+      <span class="section-title">Engines &amp; Props — The Big One</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="callout danger"><strong>DANGER:</strong> Props are 2–3 ft from the swim platforms. Helm is blind there.</div>
+      <div class="cue-row"><span class="cue-label">⚠ the rule</span><span class="cue-text">Nobody in the water if engines are on. Check with me before swimming.</span></div>
+      <div class="cue-row"><span class="cue-label">return</span><span class="cue-text">Clear the platform, <strong>THEN</strong> I start engines.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ CO risk</span><span class="cue-text">Engine &amp; generator exhaust pools at the surface near the stern. Same rule.</span></div>
+      <div class="cue-row"><span class="cue-label">fouled prop</span><span class="cue-text">Stop engines. <strong>DO NOT REVERSE.</strong> Find me.</span></div>
+    </div>
+  </div>
+
+  <!-- 06 PROPANE -->
+  <div class="section danger open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">06</span>
+      <span class="section-title">Propane</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="callout danger"><strong>DANGER:</strong> Heavier than air. Pools in bilge. Single spark = explosion.</div>
+      <div class="cue-row"><span class="cue-label">cook</span><span class="cue-text">Tank open → solenoid ON → light immediately.</span></div>
+      <div class="cue-row"><span class="cue-label">done</span><span class="cue-text">Solenoid OFF → burn off → tank closed.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ smell</span><span class="cue-text">Rotten egg: evacuate, NO switches, find me.</span></div>
+      <div class="cue-row"><span class="cue-label">note</span><span class="cue-text">Confirm solenoid at check-in. Walk them through before solo use.</span></div>
+    </div>
+  </div>
+
+  <!-- 07 HEADS -->
+  <div class="section danger open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">07</span>
+      <span class="section-title">Heads — $200 Fine to Clog</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">first rule</span><span class="cue-text">When ashore, go ashore. Use shore facilities always.</span></div>
+      <div class="cue-row"><span class="cue-label">sequence</span><span class="cue-text">Top = flush dry · Bottom = fill · Top again, <strong>hold 15 sec.</strong></span></div>
+      <div class="cue-row"><span class="cue-label">⚠ rule</span><span class="cue-text"><strong>Nothing in the head you haven't eaten. Paper in the basket.</strong></span></div>
+      <div class="cue-row"><span class="cue-label">problem</span><span class="cue-text">Not draining? Tell me. <strong>Don't keep flushing.</strong></span></div>
+    </div>
+  </div>
+
+  <!-- 08 ELECTRICAL & WATER -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">08</span>
+      <span class="section-title">Electrical &amp; Water</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">power</span><span class="cue-text">Limited resource. Don't need it, turn it off.</span></div>
+      <div class="cue-row"><span class="cue-label">high draw</span><span class="cue-text">Hair dryers, coffee maker: generator or engines running only.</span></div>
+      <div class="cue-row"><span class="cue-label">A/C</span><span class="cue-text">Avoid it — why are we here? Generator burns a lot of fuel. Use if we need it.</span></div>
+      <div class="cue-row"><span class="cue-label">water</span><span class="cue-text">Drinking water unlimited (watermaker). Drink the filtered water. 2–3L/day min.</span></div>
+      <div class="cue-row"><span class="cue-label">showers</span><span class="cue-text">Limited. Get wet · off · soap · rinse. Done.</span></div>
+      <div class="cue-row"><span class="cue-label">food</span><span class="cue-text">Counter/cockpit = open. Galley fridge = ask first.</span></div>
+    </div>
+  </div>
+
+  <!-- 09 SAFETY GEAR -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">09</span>
+      <span class="section-title">Safety Gear (TBC at check-in)</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">PFDs</span><span class="cue-text">Wear when appropriate. Rough weather, moving on deck. Ask if unsure. Wearing &gt; not wearing.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ MOB</span><span class="cue-text">Shout. Throw flotation. POINT — don't lose visual. MOB button. Do NOT jump in.</span></div>
+      <div class="cue-row"><span class="cue-label">MOB recovery</span><span class="cue-text">Guide to stern platforms. Engines OFF before anyone near props.</span></div>
+      <div class="cue-row"><span class="cue-label">engines/steer</span><span class="cue-text">Two people need to know how. Day one.</span></div>
+      <div class="cue-row"><span class="cue-label">fire ext.</span><span class="cue-text">Base of flame, sweep. Solenoid OFF first for galley fire.</span></div>
+      <div class="cue-row"><span class="cue-label">life raft</span><span class="cue-text"><strong>Deploy ONLY on my order.</strong></span></div>
+    </div>
+  </div>
+
+  <!-- 10 SEACOCKS & DINGHY -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">10</span>
+      <span class="section-title">Seacocks &amp; Dinghy</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">seacocks</span><span class="cue-text">Quarter-turn perpendicular = CLOSED. Locations on walk. Bilge pump running constantly = find me.</span></div>
+      <div class="cue-row"><span class="cue-label">dinghy</span><span class="cue-text">Sit low, no standing. Night: flashlight required.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ theft</span><span class="cue-text">Real here. Hoist it or chain it every night. Remove fuel line ashore.</span></div>
+    </div>
+  </div>
+
+  <!-- 11 DECK / SAILS -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">11</span>
+      <span class="section-title">Deck, Sails &amp; Winches</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">⚠ lines</span><span class="cue-text">Never touch a loaded line unless told to.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ winches</span><span class="cue-text">Keep hair and clothing clear. Always.</span></div>
+      <div class="cue-row"><span class="cue-label">boom</span><span class="cue-text">Swings during tacks and jibes. Stay clear.</span></div>
+      <div class="cue-row"><span class="cue-label">commands</span><span class="cue-text"><strong>STAND BY / TACKING / JIBE:</strong> stop, grab, brace.</span></div>
+      <div class="cue-row"><span class="cue-label">learning</span><span class="cue-text">Want to help? Ask. That's encouraged.</span></div>
+    </div>
+  </div>
+
+  <!-- 12 SUN / SWIMMING -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">12</span>
+      <span class="section-title">Sun, Heat &amp; Swimming</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">UV</span><span class="cue-text">Index 10–12. Burns in &lt;10 min. Breeze hides it. SPF 30+, every 2 hrs.</span></div>
+      <div class="cue-row"><span class="cue-label">hydration</span><span class="cue-text">2–3L/day. Match every drink with water.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ heat stroke</span><span class="cue-text">Confusion, not sweating = emergency. Cool fast, find me.</span></div>
+      <div class="cue-row"><span class="cue-label">swimming</span><span class="cue-text">Captain OK first. Buddy system. No solo.</span></div>
+      <div class="cue-row"><span class="cue-label">sea urchins</span><span class="cue-text">Black spines near rocks. Very hot water soak to treat.</span></div>
+      <div class="cue-row"><span class="cue-label">fire coral</span><span class="cue-text">Dull yellow. Seawater + vinegar + hydrocortisone. Wear a rash guard.</span></div>
+      <div class="cue-row"><span class="cue-label">currents</span><span class="cue-text">Strong near reef cuts. Access reefs from dinghy.</span></div>
+    </div>
+  </div>
+
+  <!-- 13 GENERAL -->
+  <div class="section open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">13</span>
+      <span class="section-title">General Boat Respect</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">hatches</span><span class="cue-text">Closed underway. Close when leaving your cabin.</span></div>
+      <div class="cue-row"><span class="cue-label">doors</span><span class="cue-text">Latch open or latch closed. Loose door in a swell = hazard.</span></div>
+      <div class="cue-row"><span class="cue-label">no stepping</span><span class="cue-text">Don't step on hatches — the seal is the only thing keeping water out.</span></div>
+      <div class="cue-row"><span class="cue-label">trash</span><span class="cue-text">Nothing overboard. Ever.</span></div>
+      <div class="cue-row"><span class="cue-label">breaks</span><span class="cue-text">Something wrong: tell me immediately. Don't fix it yourself.</span></div>
+    </div>
+  </div>
+
+  <!-- 14 EMERGENCIES -->
+  <div class="section danger open">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-num">14</span>
+      <span class="section-title">Emergencies</span>
+      <div class="check-btn" onclick="checkOff(event,this)"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="cue-row"><span class="cue-label">⚠ MOB</span><span class="cue-text">Shout · throw · POINT · MOB button · don't jump in.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ fire</span><span class="cue-text">Shout + location · base of flame · solenoid OFF · 30 sec or we go.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ water in</span><span class="cue-text">Tell me. Bilge running = find me fast. Seacock near ingress.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ abandon</span><span class="cue-text">My call. PFDs · raft · EPIRB · passports · VHF · water.</span></div>
+      <div class="cue-row"><span class="cue-label">⚠ medical</span><span class="cue-text">VHF Ch 16. MAYDAY if life-threatening.</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <strong>VHF Channel 16 — monitored at all times</strong>
+  Questions? Good. Ask them.
+</div>
+
+<script>
+  const TOTAL = 14;
+
+  function toggle(header) {
+    const section = header.closest('.section');
+    section.classList.toggle('open');
+  }
+
+  function checkOff(e, btn) {
+    e.stopPropagation();
+    btn.classList.toggle('checked');
+    const section = btn.closest('.section');
+    if (btn.classList.contains('checked')) {
+      section.classList.remove('open');
+      section.classList.add('done');
+    } else {
+      section.classList.remove('done');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const done = document.querySelectorAll('.check-btn.checked').length;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = done + ' / ' + TOTAL;
+  }
+</script>
+</body>
+</html>
